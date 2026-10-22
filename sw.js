@@ -16,3 +16,13 @@ self.addEventListener("fetch", (e) => {
     return fresh;
   })());
 });
+// SOMETHING WAITS ON YOU: Loop's push carries nothing — only that something new waits; tapping it opens Loop on what waits
+self.addEventListener("push", (e) => e.waitUntil(self.registration.showNotification("Loop", { body: "Something new waits on you", tag: "loop-waits", icon: "touch-icon.png" })));
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil((async () => {
+    const open = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    if (open[0]) return open[0].focus();
+    return self.clients.openWindow(self.registration.scope);
+  })());
+});

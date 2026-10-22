@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loop">
 <link rel="apple-touch-icon" href="touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <title>Loop</title>
 <style>
 /* LOOP ON YOUR PHONE, before it is reached: one calm screen — the same look as Loop on your Mac */
@@ -37,7 +38,7 @@ button[disabled]{opacity:.5}
 // adapters/phone; the dialer (loop_phone_bg.wasm) is pinned by its sha256.
 import init, { dial } from "./loop_phone.js";
 const WASM_SHA256 = "d06155e3f87e152de1dadf847c055056eeb5d5fdbda2cefb7e7979a1c5d2d464";
-const OWN = ["loop_phone_bg.wasm", "loop_phone.js", "touch-icon.png", "sw.js"].map((f) => new URL(f, location.href).pathname);
+const OWN = ["loop_phone_bg.wasm", "loop_phone.js", "touch-icon.png", "sw.js", "manifest.json"].map((f) => new URL(f, location.href).pathname);
 const $ = (id) => document.getElementById(id), card = $("card");
 const h = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const hex = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");

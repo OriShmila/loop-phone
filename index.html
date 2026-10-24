@@ -5,12 +5,12 @@
 <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Loop">
+<meta name="apple-mobile-web-app-title" content="Taldo">
 <link rel="apple-touch-icon" href="touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<title>Loop</title>
+<title>Taldo</title>
 <style>
-/* LOOP ON YOUR PHONE, before it is reached: one calm screen — the same look as Loop on your Mac */
+/* TALDO ON YOUR PHONE, before it is reached: one calm screen — the same look as Taldo on your Mac */
 :root{--bg:#f2f2f7;--surface:#fff;--fg:#1c1c1e;--dim:#6c6c70;--sep:rgba(60,60,67,.13);--accent:#0a66e4;--accent-soft:rgba(10,102,228,.09);--red:#d70015;--shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.035)}
 @media (prefers-color-scheme:dark){:root{--bg:#000;--surface:#1c1c1e;--fg:#f2f2f7;--dim:#98989f;--sep:rgba(84,84,88,.5);--accent:#4b93ff;--accent-soft:rgba(75,147,255,.15);--red:#ff453a;--shadow:none}}
 body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.47 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -29,16 +29,16 @@ button[disabled]{opacity:.5}
 .steps li{display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:16px}.steps li+li{border-top:.5px solid var(--sep)}
 .steps li .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;display:grid;place-items:center}
 </style>
-<div class=wrap><div class=card id=card><div class=mark><img src="touch-icon.png" alt=""></div><h1>Loop</h1><p class=wait><span class=spin></span>Reaching your Mac…</p></div></div>
+<div class=wrap><div class=card id=card><div class=mark><img src="touch-icon.png" alt=""></div><h1>Taldo</h1><p class=wait><span class=spin></span>Reaching your Mac…</p></div></div>
 <script type=module>
-// LOOP ON YOUR PHONE: this page only reaches your Mac — by your Mac's key, through a relay, end to end encrypted (the relay carries
-// bytes it cannot read) — and then is Loop as your Mac serves it: every request Loop's page makes goes to your Mac by key instead, with
+// TALDO ON YOUR PHONE: this page only reaches your Mac — by your Mac's key, through a relay, end to end encrypted (the relay carries
+// bytes it cannot read) — and then is Taldo as your Mac serves it: every request Taldo's page makes goes to your Mac by key instead, with
 // its headers, so your Mac proves who asks as it does for any screen (each request signed by this phone's own key). It is served from
 // a fixed address (GitHub Pages) so this phone's key and your Face ID stay with it; it holds nothing of yours. Built from
-// adapters/phone; the dialer (loop_phone_bg.wasm) is pinned by its sha256.
-import init, { dial } from "./loop_phone.js";
+// adapters/phone; the dialer (taldo_phone_bg.wasm) is pinned by its sha256.
+import init, { dial } from "./taldo_phone.js";
 const WASM_SHA256 = "d06155e3f87e152de1dadf847c055056eeb5d5fdbda2cefb7e7979a1c5d2d464";
-const OWN = ["loop_phone_bg.wasm", "loop_phone.js", "touch-icon.png", "sw.js", "manifest.json"].map((f) => new URL(f, location.href).pathname);
+const OWN = ["taldo_phone_bg.wasm", "taldo_phone.js", "touch-icon.png", "sw.js", "manifest.json"].map((f) => new URL(f, location.href).pathname);
 const $ = (id) => document.getElementById(id), card = $("card");
 const h = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const hex = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
@@ -50,11 +50,11 @@ const waiting = (title, line) => { card.innerHTML = `<div class=mark><img src="t
 // WHICH MAC: from the QR (kept), else what this phone kept — the QR's address carries it in its query, so the app you add to your
 // Home Screen opens with it too
 const Q = Object.fromEntries(new URLSearchParams(location.search || location.hash.slice(1)));
-if (Q.k) store.put("loop-mac", { id: Q.k, relays: (Q.r || "").split(",").filter(Boolean), owner: Q.n || "" });
-const MAC = store.get("loop-mac");
+if (Q.k) store.put("taldo-mac", { id: Q.k, relays: (Q.r || "").split(",").filter(Boolean), owner: Q.n || "" });
+const MAC = store.get("taldo-mac");
 // THE PAGE KEPT ON THIS PHONE, so it opens at once (sw.js) — absent is normal: a browser with no service workers opens it by its address
 navigator.serviceWorker?.register("sw.js").catch(() => {});
-// on an iPhone, Loop lives on your Home Screen: its keys are made there, where they stay — the browser keeps its own apart from it
+// on an iPhone, Taldo lives on your Home Screen: its keys are made there, where they stay — the browser keeps its own apart from it
 const iOS = /iPhone|iPad|iPod/.test(navigator.userAgent), home = navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
 const SHARE = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>`;
 
@@ -63,7 +63,7 @@ const D = { door: null, answers: new Map(), n: 0, why: "" };
 let dialer = null;
 async function connect() {
   if (!dialer) dialer = (async () => {
-    const bytes = await (await fetch("loop_phone_bg.wasm")).arrayBuffer();
+    const bytes = await (await fetch("taldo_phone_bg.wasm")).arrayBuffer();
     if (hex(await crypto.subtle.digest("SHA-256", bytes)) !== WASM_SHA256) throw new Error("this page's dialer is not the one it pins");
     await init({ module_or_path: bytes });
   })();
@@ -72,7 +72,7 @@ async function connect() {
     try {
       const door = await dial(MAC.id, MAC.relays);
       const first = JSON.parse(await door.recv() || "null");
-      if (first?.loop !== true) throw new Error("what answered at this key is not Loop");
+      if (first?.taldo !== true) throw new Error("what answered at this key is not Taldo");
       D.door = door; D.why = "";
       (async () => { for (;;) { const t = await door.recv(); if (t == null) break; const m = JSON.parse(t); D.answers.get(m.id)?.(m); D.answers.delete(m.id); } })()
         .catch((e) => { D.why = String(e?.message || e); })
@@ -82,7 +82,7 @@ async function connect() {
   }
 }
 const b64of = (blob) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(String(f.result).split(",")[1] || ""); f.readAsDataURL(blob); });
-// EVERY REQUEST LOOP'S PAGE MAKES OF ITS OWN ADDRESS goes to your Mac by key, headers and all — this page's own files excepted
+// EVERY REQUEST TALDO'S PAGE MAKES OF ITS OWN ADDRESS goes to your Mac by key, headers and all — this page's own files excepted
 function carry() {
   const plain = window.fetch.bind(window);
   window.fetch = async (u, o = {}) => {
@@ -96,17 +96,17 @@ function carry() {
     return new Response(bytes, { status: a.status, headers: a.headers || [] });
   };
 }
-// where this page lives (GitHub Pages serves it under the repository's name): Loop's paths are taken from there
+// where this page lives (GitHub Pages serves it under the repository's name): Taldo's paths are taken from there
 const BASE = new URL("./", location.href).pathname;
 
 async function main() {
-  if (!MAC) return screen("Pair with your Mac", "Open Loop on your Mac, choose + Connect › Your phone, and scan the code it shows with your camera.");
+  if (!MAC) return screen("Pair with your Mac", "Open Taldo on your Mac, choose + Connect › Your phone, and scan the code it shows with your camera.");
   if (iOS && !home) {
-    card.innerHTML = `<div class=mark><img src="touch-icon.png" alt=""></div><h1>Put Loop on your Home Screen</h1><p>Loop lives there, like an app. Your keys are made there and stay there.</p>
-      <ol class=steps><li><span class=n>1</span><div>Tap ${SHARE} Share in your browser</div></li><li><span class=n>2</span><div>Choose <b>Add to Home Screen</b></div></li><li><span class=n>3</span><div>Open <b>Loop</b> from your Home Screen</div></li></ol>`;
+    card.innerHTML = `<div class=mark><img src="touch-icon.png" alt=""></div><h1>Put Taldo on your Home Screen</h1><p>Taldo lives there, like an app. Your keys are made there and stay there.</p>
+      <ol class=steps><li><span class=n>1</span><div>Tap ${SHARE} Share in your browser</div></li><li><span class=n>2</span><div>Choose <b>Add to Home Screen</b></div></li><li><span class=n>3</span><div>Open <b>Taldo</b> from your Home Screen</div></li></ol>`;
     return;
   }
-  const slow = setTimeout(() => waiting("Reaching your Mac…", `Taking a while — make sure your Mac is awake and Loop is running on it.${D.why ? " " + h(D.why) : ""}`), 8000);
+  const slow = setTimeout(() => waiting("Reaching your Mac…", `Taking a while — make sure your Mac is awake and Taldo is running on it.${D.why ? " " + h(D.why) : ""}`), 8000);
   await connect();
   clearTimeout(slow);
   carry();

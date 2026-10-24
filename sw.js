@@ -1,6 +1,6 @@
 // THE PHONE KEEPS ITS PAGE: this page's own files, opened from here at once, every time, and refreshed quietly from its address when
 // that answers well. What it keeps is only this page; everything of yours comes from your Mac by key, never here.
-const C = "loop-phone", FILES = ["./", "loop_phone.js", "loop_phone_bg.wasm", "touch-icon.png"].map((f) => new URL(f, self.registration.scope).pathname);
+const C = "taldo-phone", FILES = ["./", "taldo_phone.js", "taldo_phone_bg.wasm", "touch-icon.png"].map((f) => new URL(f, self.registration.scope).pathname);
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(C).then((c) => c.addAll(FILES))); });
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", (e) => {
@@ -16,8 +16,8 @@ self.addEventListener("fetch", (e) => {
     return fresh;
   })());
 });
-// SOMETHING WAITS ON YOU: Loop's push carries nothing — only that something new waits; tapping it opens Loop on what waits
-self.addEventListener("push", (e) => e.waitUntil(self.registration.showNotification("Loop", { body: "Something new waits on you", tag: "loop-waits", icon: "touch-icon.png" })));
+// SOMETHING WAITS ON YOU: Taldo's push carries nothing — only that something new waits; tapping it opens Taldo on what waits
+self.addEventListener("push", (e) => e.waitUntil(self.registration.showNotification("Taldo", { body: "Something new waits on you", tag: "taldo-waits", icon: "touch-icon.png" })));
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
   e.waitUntil((async () => {
